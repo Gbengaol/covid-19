@@ -31,9 +31,9 @@ export default {
     return {
       customColor: `#${rand}`,
       chartdata: [
-        ["Active", this.active],
-        ["Deaths", this.deaths],
-        ["Recovered", this.recovered]
+        ["Active", this.active.split(",").join("")],
+        ["Deaths", this.deaths.split(",").join("")],
+        ["Recovered", this.recovered.split(",").join("")]
       ]
     };
   },

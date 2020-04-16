@@ -2,26 +2,15 @@
   <div id="myModal" class="modal">
     <div class="modal-content">
       <span @click="closeModal" class="close block">&times;</span>
-      <h3 class="text-center font-bold mb-3 text-black">
-        World Data
-      </h3>
+      <h3 class="text-center font-bold mb-3 text-black">World Data</h3>
       <div
-        class="dark-bg-white flex justify-between m-5 mt-8  flex-wrap lg:h-64 items-center rounded-lg px-6 py-4 cursor-pointer shadow-lg"
+        class="dark-bg-white flex justify-between m-5 mt-8 flex-wrap lg:h-64 items-center rounded-lg px-6 py-4 cursor-pointer shadow-lg"
       >
         <div>
           <h6 class="active">Active Cases: {{ totalData.active }}</h6>
           <h6 class="deaths">Deaths: {{ totalData.deaths }}</h6>
           <h6 class="recovered">Recovered: {{ totalData.recovered }}</h6>
           <h6 class="confirmed">Confirmed Cases: {{ totalData.confirmed }}</h6>
-          <h6 class="confirmed">
-            Total Cases:
-            {{
-              Number(totalData.confirmed) +
-                Number(totalData.recovered) +
-                Number(totalData.active) +
-                Number(totalData.deaths)
-            }}
-          </h6>
         </div>
         <div class="mt-4 md:mt-0">
           <Chart :chartdata="chartdata"></Chart>
@@ -38,7 +27,7 @@ import Chart from "./chart";
 export default {
   props: ["closeModal"],
   components: {
-    Chart,
+    Chart
   },
   created() {
     this.getData();
@@ -46,7 +35,7 @@ export default {
   data() {
     return {
       totalData: {},
-      chartdata: [],
+      chartdata: []
     };
   },
   methods: {
@@ -54,7 +43,7 @@ export default {
       try {
         const data = await axios({
           method: "GET",
-          url: getTotalReport,
+          url: getTotalReport
         });
         if (data.status === 200) {
           const { active, deaths, recovered, confirmed } = data.data[0];
@@ -62,15 +51,15 @@ export default {
             ["Active", active],
             ["Deaths", deaths],
             ["Recovered", recovered],
-            ["Confirmed", confirmed],
+            ["Confirmed", confirmed]
           ];
           this.totalData = data.data[0];
         }
       } catch (error) {
         console.log(error);
       }
-    },
-  },
+    }
+  }
 };
 </script>
 

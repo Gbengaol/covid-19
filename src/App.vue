@@ -155,6 +155,7 @@ export default {
 .app {
   font-family: "Roboto", sans-serif;
   color: #15202b;
+  min-height: 100vh;
 
   .dark-bg-white {
     background: #15202b;

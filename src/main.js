@@ -1,8 +1,14 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from "vue";
+import App from "./App.vue";
+import "./assets/tailwind.css";
 
-Vue.config.productionTip = false
+import Chartkick from "vue-chartkick";
+import Chart from "chart.js";
+
+Vue.use(Chartkick.use(Chart));
+
+Vue.config.productionTip = false;
 
 new Vue({
-  render: h => h(App),
-}).$mount('#app')
+  render: (h) => h(App),
+}).$mount("#app");

@@ -1,6 +1,7 @@
 <template>
-  <div class="flex justify-center items-center w-full h-full">
-    <div class="lds-hourglass relative inline-block overflow-none"></div>
+  <div class="flex flex-col justify-center items-center w-full h-full">
+    <div class="lds-hourglass relative"></div>
+    <h3 class="font-bold text-red uppercase">Loading Data, please wait...</h3>
   </div>
 </template>
 

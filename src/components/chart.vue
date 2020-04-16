@@ -4,7 +4,7 @@
       :data="chartdata"
       :donut="true"
       :legend="false"
-      :colors="['#ffc107', '#dc3545', '#28a745', '#17a2b8']"
+      :colors="['#ffc107', '#dc3545', '#28a745']"
       height="150px"
       width="150px"
     ></pie-chart>
@@ -14,7 +14,7 @@
 <script>
 export default {
   name: "Chart",
-  props: ["chartdata"],
+  props: ["chartdata"]
 };
 </script>
 

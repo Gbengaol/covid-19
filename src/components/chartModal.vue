@@ -7,59 +7,48 @@
         class="dark-bg-white flex justify-between m-5 mt-8 flex-wrap lg:h-64 items-center rounded-lg px-6 py-4 cursor-pointer shadow-lg"
       >
         <div>
-          <h6 class="active">Active Cases: {{ totalData.active }}</h6>
-          <h6 class="deaths">Deaths: {{ totalData.deaths }}</h6>
-          <h6 class="recovered">Recovered: {{ totalData.recovered }}</h6>
-          <h6 class="confirmed">Confirmed Cases: {{ totalData.confirmed }}</h6>
+          <h6 class="active">Active Cases: {{ active }}</h6>
+          <h6 class="deaths">Deaths: {{ deaths }}</h6>
+          <h6 class="recovered">Recovered: {{ recovered }}</h6>
+          <h6 class="confirmed">Confirmed Cases: {{ confirmed }}</h6>
         </div>
         <div class="mt-4 md:mt-0">
-          <Chart :chartdata="chartdata"></Chart>
+          <Chart :chartdata="chartModaldata"></Chart>
         </div>
       </div>
+      <h3 class="font-bold text-black text-center">
+        Developed by
+        <a
+          href="https://twitter.com/Gbengacodes"
+          class="underline text-blue-700"
+          target="_blank"
+        >Gbenga Olufeyimi</a> using data from
+        <a
+          href="https://covid19-api.com/docs"
+          target="_blank"
+        >https://covid19-api.com/docs</a>
+      </h3>
     </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import { getTotalReport } from "../utils/apis";
 import Chart from "./chart";
+import { formatNumber } from "../utils/formatNumber";
 export default {
-  props: ["closeModal"],
+  props: ["closeModal", "totalData", "chartModaldata"],
+  data() {
+    return {
+      active: formatNumber(this.totalData.active),
+      deaths: formatNumber(this.totalData.deaths),
+      recovered: formatNumber(this.totalData.recovered),
+      confirmed: formatNumber(this.totalData.confirmed)
+    };
+  },
   components: {
     Chart
   },
-  created() {
-    this.getData();
-  },
-  data() {
-    return {
-      totalData: {},
-      chartdata: []
-    };
-  },
-  methods: {
-    async getData() {
-      try {
-        const data = await axios({
-          method: "GET",
-          url: getTotalReport
-        });
-        if (data.status === 200) {
-          const { active, deaths, recovered, confirmed } = data.data[0];
-          this.chartdata = [
-            ["Active", active],
-            ["Deaths", deaths],
-            ["Recovered", recovered],
-            ["Confirmed", confirmed]
-          ];
-          this.totalData = data.data[0];
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  }
+  formatNumber
 };
 </script>
 
@@ -73,7 +62,7 @@ export default {
   top: 0;
   width: 100%;
   height: 100%;
-  overflow: auto;
+  overflow: hidden;
   background-color: rgb(0, 0, 0);
   background-color: rgba(0, 0, 0, 0.4);
 }

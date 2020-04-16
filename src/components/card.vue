@@ -4,12 +4,7 @@
       class="dark-bg-white flex justify-between min-h-0 min-w-0 rounded-lg px-6 py-4 transform hover:scale-105 cursor-pointer shadow-lg"
     >
       <div>
-        <h3
-          class="text-center font-bold mb-3"
-          v-bind:style="{ color: customColor }"
-        >
-          {{ country }}
-        </h3>
+        <h3 class="text-center font-bold mb-3" v-bind:style="{ color: customColor }">{{ country }}</h3>
         <h6 class="active">Active Cases: {{ active }}</h6>
         <h6 class="deaths">Deaths: {{ deaths }}</h6>
         <h6 class="recovered">Recovered: {{ recovered }}</h6>
@@ -27,7 +22,7 @@ import Chart from "./chart";
 export default {
   name: "Card",
   components: {
-    Chart,
+    Chart
   },
   data() {
     const rand = Math.random()
@@ -38,12 +33,11 @@ export default {
       chartdata: [
         ["Active", this.active],
         ["Deaths", this.deaths],
-        ["Recovered", this.recovered],
-        ["Confirmed", this.confirmed],
-      ],
+        ["Recovered", this.recovered]
+      ]
     };
   },
-  props: ["country", "active", "deaths", "recovered", "confirmed"],
+  props: ["country", "active", "deaths", "recovered", "confirmed"]
 };
 </script>
 

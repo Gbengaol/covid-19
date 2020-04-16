@@ -1,6 +1,8 @@
 <template>
   <div>
-    <div v-if="isLoading"><PreLoader /></div>
+    <div v-if="isLoading">
+      <PreLoader />
+    </div>
     <div v-if="!isLoading" class="app" :class="mode">
       <div class="container px-4 mx-auto pb-5 pt-1">
         <Header
@@ -9,17 +11,18 @@
           :toggleMode="toggleMode"
           :openModal="openModal"
           :closeModal="closeModal"
+          :chartModaldata="chartModaldata"
+          :totalData="totalData"
+          :onChangeDate="onChangeDate"
         />
-        <div
-          class="grid grid-cols-1 relative md:grid-cols-2 lg:grid-cols-3 gap-8"
-        >
+        <div class="grid grid-cols-1 relative md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div v-for="report in allCountriesData" :key="report.country">
             <Card
               v-bind:country="report.country"
-              v-bind:confirmed="report.provinces[0].confirmed"
-              v-bind:recovered="report.provinces[0].recovered"
-              v-bind:deaths="report.provinces[0].deaths"
-              v-bind:active="report.provinces[0].active"
+              v-bind:confirmed="formatNumber(report.provinces[0].confirmed)"
+              v-bind:recovered="formatNumber(report.provinces[0].recovered)"
+              v-bind:deaths="formatNumber(report.provinces[0].deaths)"
+              v-bind:active="formatNumber(report.provinces[0].active)"
             ></Card>
           </div>
         </div>
@@ -33,20 +36,33 @@ import Card from "./components/card";
 import PreLoader from "./components/preloader";
 import Header from "./components/header";
 import axios from "axios";
-import { getAllCountriesReport } from "./utils/apis";
+import { formatNumber } from "./utils/formatNumber";
+import { getAllCountriesReport, getTotalReport } from "./utils/apis";
 export default {
   name: "App",
   components: {
     Card,
     Header,
-    PreLoader,
+    PreLoader
   },
   data() {
+    const date = new Date();
+    const month = () => {
+      if (date.getMonth().toString().length === 1) {
+        return `0${date.getMonth() + 1}`;
+      } else {
+        return date.getMonth() + 1;
+      }
+    };
     return {
       allCountriesData: [],
       allCountries: [],
       mode: "light",
       isLoading: true,
+      todaysDate: `${date.getFullYear()}-${month()}-${date.getDate() - 1}`,
+      totalData: {},
+      chartModaldata: [],
+      formatNumber: formatNumber
     };
   },
   methods: {
@@ -54,7 +70,7 @@ export default {
       try {
         const data = await axios({
           method: "GET",
-          url: getAllCountriesReport,
+          url: getAllCountriesReport(this.todaysDate)
         });
         if (data.status === 200) {
           this.allCountriesData = data.data;
@@ -67,14 +83,38 @@ export default {
       }
     },
 
+    async getChartModalData() {
+      try {
+        const data = await axios({
+          method: "GET",
+          url: getTotalReport(this.todaysDate)
+        });
+        if (data.status === 200) {
+          const { active, deaths, recovered } = data.data[0];
+          this.chartModaldata = [
+            ["Active", active],
+            ["Deaths", deaths],
+            ["Recovered", recovered]
+          ];
+          this.totalData = data.data[0];
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     onChangeCountry(event) {
-      this.allCountriesData = this.allCountries.filter((country) => {
+      this.allCountriesData = this.allCountries.filter(country => {
         if (event.target.value !== "") {
           return country.country === event.target.value;
         }
 
         return this.allCountries;
       });
+    },
+
+    onChangeDate(event) {
+      this.todaysDate = event.target.value;
     },
 
     toggleMode(e) {
@@ -93,11 +133,19 @@ export default {
     closeModal() {
       var modal = document.getElementById("myModal");
       modal.style.display = "none";
-    },
+    }
   },
   created() {
     this.getData();
+    this.getChartModalData();
   },
+  watch: {
+    todaysDate: async function() {
+      this.isLoading = true;
+      await this.getData();
+      await this.getChartModalData();
+    }
+  }
 };
 </script>
 
@@ -107,8 +155,6 @@ export default {
 .app {
   font-family: "Roboto", sans-serif;
   color: #15202b;
-  min-width: 100vw;
-  min-height: 100vh;
 
   .dark-bg-white {
     background: #15202b;
@@ -123,6 +169,9 @@ export default {
     }
     .dark-bg-white {
       background: #fff;
+    }
+    .moon-light {
+      fill: #fff;
     }
   }
 }

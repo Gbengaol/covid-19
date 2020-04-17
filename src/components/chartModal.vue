@@ -36,13 +36,32 @@
 import Chart from "./chart";
 import { formatNumber } from "../utils/formatNumber";
 export default {
-  props: ["closeModal", "totalData", "chartModaldata"],
+  props: ["closeModal", "allCountries"],
   data() {
+    let totalData = {
+      confirmed: 0,
+      recovered: 0,
+      deaths: 0,
+      active: 0
+    };
+    this.allCountries.map(item => {
+      const { confirmed, recovered, deaths, active } = item.provinces[0];
+      totalData.confirmed = Number(totalData.confirmed) + Number(confirmed);
+      totalData.recovered = Number(totalData.recovered) + Number(recovered);
+      totalData.deaths = Number(totalData.deaths) + Number(deaths);
+      totalData.active = Number(totalData.active) + Number(active);
+    });
     return {
-      active: formatNumber(this.totalData.active),
-      deaths: formatNumber(this.totalData.deaths),
-      recovered: formatNumber(this.totalData.recovered),
-      confirmed: formatNumber(this.totalData.confirmed)
+      totalData,
+      active: formatNumber(totalData.active),
+      deaths: formatNumber(totalData.deaths),
+      recovered: formatNumber(totalData.recovered),
+      confirmed: formatNumber(totalData.confirmed),
+      chartModaldata: [
+        ["Active", totalData.active],
+        ["Deaths", totalData.deaths],
+        ["Recovered", totalData.recovered]
+      ]
     };
   },
   components: {

@@ -11,13 +11,14 @@
     </div>
     <div class="mb-5 flex flex-wrap justify-between items-center">
       <img class="logo rounded-full" src="../img/covid.jpg" />
-      <div>
+      <div class="flex flex-col items-center justify-center">
         <h1 class="dark-text-white uppercase text-black font-bold text-2xl">Covid 19 Report</h1>
+        <small class="text-xs italic font-bold text-red-900">As at the end of {{todaysDate}}</small>
       </div>
       <Select :allCountries="allCountries" :onChangeCountry="onChangeCountry" />
       <DatePicker :onChangeDate="onChangeDate" />
     </div>
-    <ChartModal :closeModal="closeModal" :totalData="totalData" :chartModaldata="chartModaldata" />
+    <ChartModal :closeModal="closeModal" :allCountries="allCountries" />
   </div>
 </template>
 
@@ -39,9 +40,8 @@ export default {
     "toggleMode",
     "openModal",
     "closeModal",
-    "chartModaldata",
-    "totalData",
-    "onChangeDate"
+    "onChangeDate",
+    "todaysDate"
   ]
 };
 </script>

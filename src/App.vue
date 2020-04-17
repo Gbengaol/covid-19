@@ -3,6 +3,9 @@
     <div v-if="isLoading">
       <PreLoader />
     </div>
+    <div v-if="error">
+      <h3 class="text-center text-red font-bold">An Error Occured, please try again ...</h3>
+    </div>
     <div v-if="!isLoading" class="app" :class="mode">
       <div class="container px-4 mx-auto pb-5 pt-1">
         <Header
@@ -11,9 +14,8 @@
           :toggleMode="toggleMode"
           :openModal="openModal"
           :closeModal="closeModal"
-          :chartModaldata="chartModaldata"
-          :totalData="totalData"
           :onChangeDate="onChangeDate"
+          :todaysDate="todaysDate"
         />
         <div class="grid grid-cols-1 relative md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div v-for="report in allCountriesData" :key="report.country">
@@ -37,7 +39,7 @@ import PreLoader from "./components/preloader";
 import Header from "./components/header";
 import axios from "axios";
 import { formatNumber } from "./utils/formatNumber";
-import { getAllCountriesReport, getTotalReport } from "./utils/apis";
+import { getAllCountriesReport } from "./utils/apis";
 export default {
   name: "App",
   components: {
@@ -59,9 +61,8 @@ export default {
       allCountries: [],
       mode: "light",
       isLoading: true,
+      error: false,
       todaysDate: `${date.getFullYear()}-${month()}-${date.getDate() - 1}`,
-      totalData: {},
-      chartModaldata: [],
       formatNumber: formatNumber
     };
   },
@@ -80,26 +81,7 @@ export default {
       } catch (error) {
         console.log(error);
         this.isLoading = false;
-      }
-    },
-
-    async getChartModalData() {
-      try {
-        const data = await axios({
-          method: "GET",
-          url: getTotalReport(this.todaysDate)
-        });
-        if (data.status === 200) {
-          const { active, deaths, recovered } = data.data[0];
-          this.chartModaldata = [
-            ["Active", active],
-            ["Deaths", deaths],
-            ["Recovered", recovered]
-          ];
-          this.totalData = data.data[0];
-        }
-      } catch (error) {
-        console.log(error);
+        this.error = true;
       }
     },
 
@@ -108,7 +90,6 @@ export default {
         if (event.target.value !== "") {
           return country.country === event.target.value;
         }
-
         return this.allCountries;
       });
     },
@@ -137,13 +118,12 @@ export default {
   },
   created() {
     this.getData();
-    this.getChartModalData();
   },
   watch: {
     todaysDate: async function() {
       this.isLoading = true;
-      await this.getData();
-      await this.getChartModalData();
+      this.error = false;
+      this.getData();
     }
   }
 };

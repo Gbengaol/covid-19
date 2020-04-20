@@ -16,6 +16,7 @@
           :closeModal="closeModal"
           :onChangeDate="onChangeDate"
           :todaysDate="todaysDate"
+          :mode="mode"
         />
         <div class="grid grid-cols-1 relative md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div v-for="report in allCountriesData" :key="report.country">
@@ -101,8 +102,10 @@ export default {
     toggleMode(e) {
       if (e.target.checked) {
         this.mode = "dark";
+        localStorage.setItem("theme", "dark");
       } else {
         this.mode = "light";
+        localStorage.setItem("theme", "light");
       }
     },
 
@@ -118,6 +121,12 @@ export default {
   },
   created() {
     this.getData();
+
+    // Setting the theme if the theme already existed
+    const theme = localStorage.getItem("theme");
+    if (theme) {
+      this.mode = theme;
+    }
   },
   watch: {
     todaysDate: async function() {

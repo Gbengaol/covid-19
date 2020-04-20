@@ -18,7 +18,7 @@
       </svg>
     </em>
     <label class="theme-switch" for="checkbox">
-      <input type="checkbox" @change="toggleMode($event)" id="checkbox" />
+      <input type="checkbox" @change="toggleMode($event)" id="checkbox" v-model="switchState" />
       <div class="slider round"></div>
     </label>
     <em>
@@ -43,7 +43,24 @@
 
 <script>
 export default {
-  props: ["toggleMode"]
+  props: ["toggleMode", "mode"],
+  data() {
+    return {
+      switchState: false
+    };
+  },
+  created() {
+    this.setSwitchState();
+  },
+  methods: {
+    setSwitchState() {
+      if (this.mode === "light") {
+        this.switchState = false;
+      } else {
+        this.switchState = true;
+      }
+    }
+  }
 };
 </script>
 
